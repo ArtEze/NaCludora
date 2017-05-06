@@ -71,10 +71,6 @@ function tokenize(text) {
     }
     return tokens
 }
-
-Tokens  = []
-t_index = 0
-
 function eatToken() { return Tokens[++t_index] }
 function eof() { return t_index >= Tokens.length }
 function factor() {
@@ -136,15 +132,19 @@ function parse(tokens) {
 	var tmp = expression().eval()
     return tmp
 }
+window.onload=function ininio()
+{
+	Tokens  = []
+	t_index = 0
 
-
-// Olvidemonos de estos seniores.
-btnClear.addEventListener("click", function() {
-	expresion.value = '' 
-    lblResultado.innerHTML = ''
-    Tokens = null
-    t_index = 0
-})
-btnParse.addEventListener("click", function () {
-    lblResultado.innerHTML = parse(tokenize(expresion.value))
-})
+	// Olvidemonos de estos seniores.
+	btnClear.addEventListener("click", function() {
+		expresion.value = '' 
+		lblResultado.innerHTML = ''
+		Tokens = null
+		t_index = 0
+	})
+	btnParse.addEventListener("click", function () {
+		lblResultado.innerHTML = parse(tokenize(expresion.value))
+	})
+}
