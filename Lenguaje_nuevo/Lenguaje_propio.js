@@ -13,7 +13,7 @@
 		if (txtInput.value == '')
 			error('Introduzca algo en el input.')
 		else 
-			Exec(Parse(Tokenize(txtInput.value)))
+			ejecutar_sentencias(analizar(tokenizar(txtInput.value)))
 			// Oh kiddo.
 	}
 }
@@ -44,14 +44,13 @@ function warn(msg) {
 }
 
 // Nodos
-function GenericNode(value) {
+function Nodo_genérico(value) {
 	this.Value = value
     this.Eval = function() {
     	return this.Value
     };
 };
-
-function NegateNode(negNode) {
+function Nodo_negado(negNode) {
 	this.Value = negNode
     this.Eval = function() {
     	var tmpValue = this.Value.Eval()
@@ -60,8 +59,7 @@ function NegateNode(negNode) {
         return -tmpValue
     }
 }
-
-function BinOpNode(LeftNode, op, RightNode) {
+function Nodo_operador_binario(LeftNode, op, RightNode) {
 	this.Left = LeftNode
     this.Right = RightNode
     this.Op = op
@@ -98,17 +96,18 @@ function BinOpNode(LeftNode, op, RightNode) {
         }
     }
 }
+
 // Si, el underscore es considerado una letra.
-function IsLetter(c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'); }
-function IsDigit(c)  { return isFinite(c) }
-function IsQuote(c)  { return (c === '\'' || c === '\"' || c === '\`'); }
-function IsSymbol(c) { 
+function es_letra(c) { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c == '_'); }
+function es_dígito(c)  { return isFinite(c) }
+function es_comilla(c)  { return (c === '\'' || c === '\"' || c === '\`'); }
+function es_símbolo(c) {
     var cadena="+-*/%={}()[]<>&|!^;:?.,$~@"+"\\"
     return cadena.indexOf(c) != -1
 }
-function IsLF(c) { return (c == '\t' || c == '\r' || c == '\n'); }
+function es_salto_línea(c) { return (c == '\t' || c == '\r' || c == '\n'); }
 
-function Tokenize(input) {
+function tokenizar(input) {
 	var tokens = []
     var tindex = 0
     var current = ''
@@ -117,9 +116,9 @@ function Tokenize(input) {
 	function NextChar() { return input[++i] }
     
     while (i < input.length) {
-    	if (IsLF(CurrentChar()) || CurrentChar() == ' ') 
+    	if (es_salto_línea(CurrentChar()) || CurrentChar() == ' ') 
         	NextChar()
-        else if (IsQuote(CurrentChar())) {
+        else if (es_comilla(CurrentChar())) {
         	var quote = CurrentChar()
             NextChar()
         	while (CurrentChar() != quote) {
@@ -133,32 +132,32 @@ function Tokenize(input) {
             tokens[tindex++] = current
             NextChar() // Come la comilla que queda.
         }
-        else if (IsLetter(CurrentChar())) {
+        else if (es_letra(CurrentChar())) {
         	// a-zA-Z0-9+
-        	while (!IsLF(CurrentChar()) && CurrentChar() != ' ' && 
-                  (IsLetter(CurrentChar()) || IsDigit(CurrentChar()))) {
+        	while (!es_salto_línea(CurrentChar()) && CurrentChar() != ' ' && 
+                  (es_letra(CurrentChar()) || es_dígito(CurrentChar()))) {
             	current += CurrentChar()
             	NextChar()
             }
             tokens[tindex++] = current
         }
-        else if (IsDigit(CurrentChar())) {
-        	while (IsDigit(CurrentChar())) {
+        else if (es_dígito(CurrentChar())) {
+        	while (es_dígito(CurrentChar())) {
             	current += CurrentChar()
                 NextChar()
             }
             if (CurrentChar() == '.') {
             	current += '.'
                 NextChar()
-                while (IsDigit(CurrentChar())) {
+                while (es_dígito(CurrentChar())) {
                     current += CurrentChar()
                     NextChar()
                 }
-                tokens[tindex++] = parseFloat(current)
+                tokens[tindex++] = analizarFloat(current)
             }
-            else tokens[tindex++] = parseInt(current)
+            else tokens[tindex++] = analizarInt(current)
         }
-        else if (IsSymbol(CurrentChar())) {
+        else if (es_símbolo(CurrentChar())) {
         	current = CurrentChar()
             var operadores = [ 
             	"<=", ">=", "==", "!=", "&&", "||",
@@ -167,7 +166,7 @@ function Tokenize(input) {
                 "+=", "-=", "*=", "/=", "%=", "**", // Potencia.
                 "<<", ">>", "^=" // Xor.
             ]
-            if (IsSymbol(NextChar())) {
+            if (es_símbolo(NextChar())) {
             	var tmp = current + CurrentChar()
             	if (operadores.indexOf(tmp) != -1) {
                 	NextChar()
@@ -188,7 +187,7 @@ function Tokenize(input) {
     return tokens
 }
 
-function Parse(tokens) {
+function analizar(tokens) {
 	var CTokPos = 0
 	function EatToken() {
         return tokens[++CTokPos]
@@ -199,11 +198,11 @@ function Parse(tokens) {
 	function Factor() {
     	var rtn = null
         if (isFinite(CurrentToken()) || typeof(CurrentToken()) == 'string') {
-        	rtn = new GenericNode(CurrentToken())
+        	rtn = new Nodo_genérico(CurrentToken())
             EatToken()
         }
         else if (CurrentToken() == 'false' || CurrentToken() == 'true') 
-        	rtn = new GenericNode(CurrentToken() == 'false' ? false : true)
+        	rtn = new Nodo_genérico(CurrentToken() == 'false' ? false : true)
         else if (CurrentToken() == '(') {
         	EatToken()
             rtn = Expression()
@@ -214,7 +213,7 @@ function Parse(tokens) {
     function NotFactor() {
     	if (CurrentToken() == '-') {
         	EatToken()
-            return new NegateNode(Factor())
+            return new Nodo_negado(Factor())
         }
         return Factor()
     }
@@ -222,7 +221,7 @@ function Parse(tokens) {
     	var left = NotFactor()
         while (CurrentToken() == '**') {
         	EatToken()
-        	left = new BinOpNode(left, '**', NotFactor())
+        	left = new Nodo_operador_binario(left, '**', NotFactor())
         }
         return left
     }
@@ -231,7 +230,7 @@ function Parse(tokens) {
         while (CurrentToken() == '*' || CurrentToken() == '/' || CurrentToken() == '%') {
         	var op = CurrentToken()
             EatToken()
-            left = new BinOpNode(left, op, Pwr())
+            left = new Nodo_operador_binario(left, op, Pwr())
         }
         return left
     }
@@ -240,7 +239,7 @@ function Parse(tokens) {
         while (CurrentToken() == '+' || CurrentToken() == '-') {
         	var op = CurrentToken()
             EatToken()
-            left = new BinOpNode(left, op, Term())
+            left = new Nodo_operador_binario(left, op, Term())
         }
         return left
     }
@@ -250,14 +249,14 @@ function Parse(tokens) {
         if (ops.indexOf(CurrentToken()) != -1) {
         	var op = CurrentToken()
             EatToken()
-            left = new BinOpNode(left, op, ArithExpression())
+            left = new Nodo_operador_binario(left, op, ArithExpression())
         }
         return left
     }
     function NotRelation() {
     	if (CurrentToken() == '!') {
         	EatToken()
-            return new NegateNode(Relation())
+            return new Nodo_negado(Relation())
         }
     	return Relation()
     }
@@ -265,7 +264,7 @@ function Parse(tokens) {
     	var left = NotRelation() 
         while (CurrentToken() == '&&') {
         	EatToken()
-            left = new BinOpNode(left, '&&', NotRelation())
+            left = new Nodo_operador_binario(left, '&&', NotRelation())
         }
         return left
     }
@@ -273,7 +272,7 @@ function Parse(tokens) {
     	var left = NotRelation() 
         while (CurrentToken() == '||') {
         	EatToken()
-            left = new BinOpNode(left, '||', NotRelation())
+            left = new Nodo_operador_binario(left, '||', NotRelation())
         }
         return left
     }
@@ -283,7 +282,7 @@ function Parse(tokens) {
     return Expression()
 }
 
-function Exec(NodeList) {
+function ejecutar_sentencias(NodeList) {
 	var tmp = 0
     tmp = NodeList.Eval()
     
