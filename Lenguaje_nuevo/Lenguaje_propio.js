@@ -1,19 +1,38 @@
-﻿function btn_limpiar(tipo) {
-	switch (tipo) {
-		case 'entrada':txtInput.value = '';break
-		case 'salida':txtOutput.value = '';break
-		case 'todo':
-			txtInput.value = ''
-			txtOutput.value = ''
-			break
+﻿btn={
+	limpiar:function(tipo){
+		switch (tipo) {
+			case 'entrada':txtInput.value = '';break
+			case 'salida':txtOutput.value = '';break
+			case 'todo':
+				txtInput.value = ''
+				txtOutput.value = ''
+				break
+		}
+	},
+	ejecutar:function() {
+		if (txtInput.value == '')
+			error('Introduzca algo en el input.')
+		else 
+			Exec(Parse(Tokenize(txtInput.value)))
+			// Oh kiddo.
 	}
 }
-function btn_ejecutar() {
-	if (txtInput.value == '')
-		error('Introduzca algo en el input.')
-	else 
-		Exec(Parse(Tokenize(txtInput.value)))
-		// Oh kiddo.
+
+function variables_varias()
+{
+	var acceptedSymbols = [
+		// Language specifics
+		'->', '$', '@', '~', '.', ',', ':', ';', '?', '\\',
+		// Arithmethic
+		'+', '-', '*', '/', '%', '^', '=',
+		// Booleans
+		'<=', '<', '==', '!=', '>', '>=', '&&', '||', '!',
+		// Braces
+		'[', ']', '{', '}', '(', ')',
+		// Fractions and special notations
+		"frac"
+	];
+	return acceptedSymbols
 }
 
 // Mensaje de error
