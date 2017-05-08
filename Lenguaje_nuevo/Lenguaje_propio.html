@@ -1,6 +1,7 @@
 ﻿<!doctype hmtl>
 <html>
     <head>
+		<meta charset="utf-8" ></meta>
         <title>Nuevo lenguaje de programación.</title>
         <script type="text/javascript" src="Lenguaje_propio.js"></script>
 		<link rel="stylesheet" href="Lenguaje_propio.css"></link>
@@ -8,16 +9,25 @@
 	<body>
 		<table>
 			<tr><td align="center">Input: </td></tr>
-			<tr><td colspan="2"><textarea id="txtInput" cols="50" rows="15" placeholder="Input here"></textarea></td></tr>
+			<tr><td colspan="5"><textarea id="txtInput" cols="50" rows="15" placeholder="Input here"></textarea></td></tr>
 			<tr>
 				<td>
 					<input onclick="btn_ejecutar()" style="width:100%" type="button" id="btnEjecutar" value="Ejecutar" ></input>
 				</td>
 				<td>
-					<input onclick="btn_limpiar()" style="width:100%" type="button" id="btnLimpiar" value="Limpiar" ></input>
+					> Limpiar: 
+				</td>
+				<td>
+					<input onclick="btn_limpiar('entrada')" style="width:100%" type="button" id="btnLimpiar" value="Entrada" ></input>
+				</td>
+				<td>
+					<input onclick="btn_limpiar('salida')" style="width:100%" type="button" id="btnLimpiar" value="Salida" ></input>
+				</td>
+				<td>
+					<input onclick="btn_limpiar('todo')" style="width:100%" type="button" id="btnLimpiar" value="Todo" ></input>
 				</td>
 			</tr>
-			<tr><td colspan="2"><textarea id="txtOutput" cols="50" rows="8" placeholder="See output" readonly="true"></textarea></td></tr>
+			<tr><td colspan="5"><textarea id="txtOutput" cols="50" rows="8" placeholder="See output" readonly="true"></textarea></td></tr>
 		</table>
 	</body>
 </html>

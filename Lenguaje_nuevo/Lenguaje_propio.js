@@ -1,6 +1,12 @@
-﻿function btn_limpiar() {
-	txtInput.value = ''
-	txtOutput.value = ''
+﻿function btn_limpiar(tipo) {
+	switch (tipo) {
+		case 'entrada':txtInput.value = '';break
+		case 'salida':txtOutput.value = '';break
+		case 'todo':
+			txtInput.value = ''
+			txtOutput.value = ''
+			break
+	}
 }
 function btn_ejecutar() {
 	if (txtInput.value == '')
