@@ -1,4 +1,4 @@
-﻿//window.onLoad = function inicio() {
+﻿window.onLoad = function inicio() {
 	// Carga los eventos y esas weas.
     btnLimpiar.addEventListener("click", function() {
     	txtInput.value = ''
@@ -11,7 +11,7 @@
         	Exec(Parse(Tokenize(txtInput.value)))
             // Oh kiddo.
     })
-//}
+}
 
 // Mensaje de error
 function error(msg) {
