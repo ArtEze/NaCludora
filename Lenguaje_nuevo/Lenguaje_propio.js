@@ -1,16 +1,13 @@
-﻿window.onLoad = function inicio() {
-	// Carga los eventos y esas weas.
-    btnLimpiar.addEventListener("click", function() {
-    	txtInput.value = ''
-        txtOutput.value = ''
-    })
-    btnEjecutar.addEventListener("click", function() {
-    	if (txtInput.value == '')
-        	error('Introduzca algo en el input.')
-        else 
-        	Exec(Parse(Tokenize(txtInput.value)))
-            // Oh kiddo.
-    })
+﻿function btn_limpiar() {
+	txtInput.value = ''
+	txtOutput.value = ''
+}
+function btn_ejecutar() {
+	if (txtInput.value == '')
+		error('Introduzca algo en el input.')
+	else 
+		Exec(Parse(Tokenize(txtInput.value)))
+		// Oh kiddo.
 }
 
 // Mensaje de error
