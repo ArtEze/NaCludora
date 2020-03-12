@@ -1,4 +1,4 @@
-﻿btn={
+btn={
 	limpiar:function(tipo){
 		switch (tipo) {
 			case 'entrada':txtInput.value = '';break
@@ -153,9 +153,9 @@ function tokenizar(input) {
 					current += CurrentChar()
 					NextChar()
 				}
-				tokens[tindex++] = analizarFloat(current)
+				tokens[tindex++] = parseFloat(current)
 			}
-			else tokens[tindex++] = analizarInt(current)
+			else tokens[tindex++] = parseInt(current)
 		}
 		else if (es_símbolo(CurrentChar())) {
 			current = CurrentChar()
